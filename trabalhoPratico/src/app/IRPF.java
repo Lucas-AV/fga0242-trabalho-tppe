@@ -289,6 +289,34 @@ public class IRPF {
 		}
 		return soma;
 	}
+
+	// OBS
 	
+	/*
+	 * - a base de cálculo do imposto, 
+	 * - os impostos por faixas e o total do imposto, 
+	 * - e a alíquota efetiva do imposto pago. 
+	*/
 	
+	/* func LUCAS - a base de cálculo do imposto, */ 
+	/*
+	 * Aliquota efetiva do imposto pago 
+	 * @param 
+	 * @return
+	 */
+
+	/** 
+	 * Calcula a base de cálculo do imposto, que é o valor total dos rendimentos 
+	 * tributáveis menos as deduções permitidas. 
+	 * @return base de cálculo do imposto 
+	 */ 
+	public float calcularBaseDeCalculo() { 
+		float totalDeRendimentos = getTotalRendimentosTributaveis(); 
+		float totalDeDeducoes = getDeducao() + getTotalOutrasDeducoes(); 
+		float totalPensaoAlimenticia = getTotalPensaoAlimenticia();
+		return totalDeRendimentos - totalDeDeducoes - totalPensaoAlimenticia;
+	}
+	
+
 }
+// ( ͡° ͜ʖ ͡°)
