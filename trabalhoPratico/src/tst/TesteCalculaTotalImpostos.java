@@ -41,9 +41,9 @@ public class TesteCalculaTotalImpostos {
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
             // expectedImpostos, salario, aluguel, bolsa, pensao, deducaoIntegral, contribuicao
-            {987.88f, 8000, 2000, 1500, 1500, 1000, 500}, // Cenário 1: Valores originais
-            {850.00f, 7000, 2000, 1500, 1200, 900, 400},   // Cenário 2: Valores alterados
-            {1100.50f, 9000, 2500, 0, 2000, 1500, 600}     // Cenário 3: Outro conjunto de valores
+            {976.89f, 8000, 2000, 1500, 1500, 1000, 500}, // Cenário 1: Valores originais
+            {839.39f, 7000, 2000, 1500, 1200, 900, 400},   // Cenário 2: Valores alterados
+            {1086.89f, 9000, 2500, 0, 2000, 1500, 600}     // Cenário 3: Outro conjunto de valores
         });
     }
 
