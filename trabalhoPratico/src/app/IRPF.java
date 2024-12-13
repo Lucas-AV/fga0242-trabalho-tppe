@@ -381,11 +381,17 @@ public class IRPF {
 	public float aliquotaEfetiva() {
 		// Calcular o imposto devido
 		float impostoDevido = calculaTotalImpostos();
+	
+		// Obter o total de rendimentos tributáveis
+		float totalRendimentosTributaveis = getTotalRendimentosTributaveis();
+	
+		// Evitar divisão por zero
+		if (totalRendimentosTributaveis == 0) {
+			return 0.0f;
+		}
 
-		// Calcular a aliquota efetiva
-		float aliquotaEfetiva = (impostoDevido / getTotalRendimentosTributaveis()) * 100;
-
-		return Math.max(aliquotaEfetiva, 0.0f);
+		// Calcular a alíquota efetiva
+		return (impostoDevido / totalRendimentosTributaveis) * 100;
 	}
 
 }
