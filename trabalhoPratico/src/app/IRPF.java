@@ -396,5 +396,24 @@ public class IRPF {
 		aux *= aliquota[4];
 		return imposto + aux;
 	}
+
+	/**
+	 * Aliquota efetiva do imposto pago 
+	 * @param impostoDevido
+	 * @return aliquotaEfetiva
+	 */
+	public float aliquotaEfetiva() {
+		// Calcular o imposto devido
+		float impostoDevido = calculaTotalImpostos();
+		
+		// Calcular a base de cálculo
+		float baseDeCalculo = calcularBaseDeCalculo(); 
+
+		// Calcular a aliquota efetiva
+		float aliquotaEfetiva = (impostoDevido / baseDeCalculo) * 100;
+
+		return Math.max(aliquotaEfetiva, 0.0f);
+	}
+
 }
 // ( ͡° ͜ʖ ͡°)
