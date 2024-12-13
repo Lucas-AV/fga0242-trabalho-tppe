@@ -14,61 +14,26 @@ import java.util.Collection;
 
 @RunWith(Parameterized.class)
 public class TesteBaseDeCalculo {
+
     private IRPF irpf;
-    private String nomeRendimento1;
-    private float valorRendimento1;
-    private boolean tributavel1;
+    private float salario;
+    private float aluguel;
+    private float bolsaEstudos;
+    private float contribuicaoPrevidenciariaPrivada;
+    private float contribuicaoPrevidenciariaOficial;
+    private float pensaoAlimenticia;
+    private float resultadoEsperado;
 
-    private String nomeRendimento2;
-    private float valorRendimento2;
-    private boolean tributavel2;
-
-    private String nomeRendimento3;
-    private float valorRendimento3;
-    private boolean tributavel3;
-
-    private String dependenteNome;
-    private String dependenteParentesco;
-
-    private float valorContribuicaoPrevidenciaria;
-    private float valorPensaoAlimenticia;
-
-    private float esperadoBaseDeCalculo;
-
-    @Parameterized.Parameters
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-            // {nomeRendimento1, valorRendimento1, tributavel1, nomeRendimento2, valorRendimento2, tributavel2, nomeRendimento3, valorRendimento3, tributavel3, dependenteNome, dependenteParentesco, valorContribuicaoPrevidenciaria, valorPensaoAlimenticia, esperadoBaseDeCalculo}
-            {"Salário", 8000, true, "Aluguel", 2000, true, "Bolsa de estudos", 1500, false, "filho", "filho", 1000, 1500, 6810.41f},
-            // Adicionar outros casos de teste conforme necessário
-        });
-    }
-
-    public TesteBaseDeCalculo(String nomeRendimento1, float valorRendimento1, boolean tributavel1,
-                               String nomeRendimento2, float valorRendimento2, boolean tributavel2,
-                               String nomeRendimento3, float valorRendimento3, boolean tributavel3,
-                               String dependenteNome, String dependenteParentesco,
-                               float valorContribuicaoPrevidenciaria, float valorPensaoAlimenticia,
-                               float esperadoBaseDeCalculo) {
-        this.nomeRendimento1 = nomeRendimento1;
-        this.valorRendimento1 = valorRendimento1;
-        this.tributavel1 = tributavel1;
-
-        this.nomeRendimento2 = nomeRendimento2;
-        this.valorRendimento2 = valorRendimento2;
-        this.tributavel2 = tributavel2;
-
-        this.nomeRendimento3 = nomeRendimento3;
-        this.valorRendimento3 = valorRendimento3;
-        this.tributavel3 = tributavel3;
-
-        this.dependenteNome = dependenteNome;
-        this.dependenteParentesco = dependenteParentesco;
-
-        this.valorContribuicaoPrevidenciaria = valorContribuicaoPrevidenciaria;
-        this.valorPensaoAlimenticia = valorPensaoAlimenticia;
-
-        this.esperadoBaseDeCalculo = esperadoBaseDeCalculo;
+    // Construtor parametrizado
+    public TesteBaseDeCalculo(float salario, float aluguel, float bolsaEstudos, float contribuicaoPrevidenciariaPrivada, 
+                                float contribuicaoPrevidenciariaOficial, float pensaoAlimenticia, float resultadoEsperado) {
+        this.salario = salario;
+        this.aluguel = aluguel;
+        this.bolsaEstudos = bolsaEstudos;
+        this.contribuicaoPrevidenciariaPrivada = contribuicaoPrevidenciariaPrivada;
+        this.contribuicaoPrevidenciariaOficial = contribuicaoPrevidenciariaOficial;
+        this.pensaoAlimenticia = pensaoAlimenticia;
+        this.resultadoEsperado = resultadoEsperado;
     }
 
     @Before
@@ -76,22 +41,40 @@ public class TesteBaseDeCalculo {
         irpf = new IRPF();
         
         // Cadastro dos rendimentos
-        irpf.criarRendimento(nomeRendimento1, tributavel1, valorRendimento1);
-        irpf.criarRendimento(nomeRendimento2, tributavel2, valorRendimento2);
-        irpf.criarRendimento(nomeRendimento3, tributavel3, valorRendimento3);
+        irpf.criarRendimento("Salário", IRPF.TRIBUTAVEL, salario);
+        irpf.criarRendimento("Aluguel", IRPF.TRIBUTAVEL, aluguel);
+        irpf.criarRendimento("Bolsa de estudos", IRPF.NAOTRIBUTAVEL, bolsaEstudos);
         
-        // Cadastro do dependente
-        irpf.cadastrarDependente(dependenteNome, dependenteParentesco);
-        irpf.cadastrarPensaoAlimenticia(dependenteNome, valorPensaoAlimenticia); 
+        // Cadastro do dependente Filho
+        irpf.cadastrarDependente("filho", "filho");
+        irpf.cadastrarPensaoAlimenticia("filho", pensaoAlimenticia);
         
         // Cadastro das deduções
-        irpf.cadastrarDeducaoIntegral("Contribuição previdenciária privada", valorContribuicaoPrevidenciaria);
-        irpf.cadastrarContribuicaoPrevidenciaria(valorContribuicaoPrevidenciaria);
+        irpf.cadastrarDeducaoIntegral("Contribuição previdenciária privada", contribuicaoPrevidenciariaPrivada);
+        irpf.cadastrarContribuicaoPrevidenciaria(contribuicaoPrevidenciariaOficial);
+    }
+
+    @Parameterized.Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][]{
+            // Caso 1: Rendimentos e deduções com valores conhecidos
+            {8000f, 2000f, 1500f, 1000f, 500f, 1500f, 6810.41f},
+
+            // Caso 2: Teste com salário maior e deduções altas
+            {15000f, 3000f, 1000f, 2000f, 1000f, 2000f, 16210.41f},
+
+            // Caso 3: Teste com salário e aluguel baixos e alta pensão alimentícia
+            {3000f, 1000f, 0f, 500f, 1000f, 3000f, 0f},
+
+            // Caso 4: Teste sem rendimentos tributáveis
+            {0f, 0f, 0f, 0f, 0f, 0f, 0f}
+        });
     }
 
     @Test
     public void testBaseDeCalculo() {
-        assertEquals(esperadoBaseDeCalculo, irpf.calcularBaseDeCalculo(), 0.01f);
+        assertEquals(resultadoEsperado, irpf.calcularBaseDeCalculo(), 0.01f);
     }
 }
+
 
