@@ -341,55 +341,31 @@ public class IRPF {
 		float imposto = 0.0f;
 		
 		if (salario <= faixas[0]){
-		return imposto + aux;
+			return imposto + aux;
 		}
 		
 		if (salario > faixas[0] && salario >= faixas[1]){
-		imposto += 42.59f;
-		}else{
-		aux = salario - faixas[0];
-		aux *= aliquota[1];
-		return imposto + aux;
+			imposto += 42.59f;
+		} else {
+			aux = salario - faixas[0];
+			aux *= aliquota[1];
+			return imposto + aux;
 		}
 		
 		if (salario > faixas[1] && salario >= faixas[2]){
-		imposto += 138.66f;
-		}else{
-		aux = salario - faixas[1];
-		aux *= aliquota[2];
-		return imposto + aux;
+			imposto += 138.66f;
+		} else {
+			aux = salario - faixas[1];
+			aux *= aliquota[2];
+			return imposto + aux;
 		}
 		
 		if (salario > faixas[2] && salario >= faixas[3]){
-		imposto += 205.57;
+			imposto += 205.57;
 		}else{
-		aux = salario - faixas[2];
-		aux *= aliquota[3];
-		return imposto + aux;
-		}
-
-		aux = salario - faixas[3];
-		aux *= aliquota[4];
-		return imposto + aux;else{
-		aux = salario - faixas[0];
-		aux *= aliquota[1];
-		return imposto + aux;
-		}
-		
-		if (salario > faixas[1] && salario >= faixas[2]){
-		imposto += 138.66f;
-		}else{
-		aux = salario - faixas[1];
-		aux *= aliquota[2];
-		return imposto + aux;
-		}
-		
-		if (salario > faixas[2] && salario >= faixas[3]){
-		imposto += 205.57;
-		}else{
-		aux = salario - faixas[2];
-		aux *= aliquota[3];
-		return imposto + aux;
+			aux = salario - faixas[2];
+			aux *= aliquota[3];
+			return imposto + aux;
 		}
 
 		aux = salario - faixas[3];
