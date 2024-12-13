@@ -334,18 +334,18 @@ public class IRPF {
 		float salario = calcularBaseDeCalculo();
 
 		float faixas[] = {
-		2259.20f, 
-		2826.65f, 
-		3751.05f,
-		4664.68f
+			2259.20f, 
+			2826.65f, 
+			3751.05f,
+			4664.68f
 		};
 
 		float aliquota[] = {
-		0.0f,
-		0.075f,
-		0.15f,
-		0.225f,
-		0.275f
+			0.0f,
+			0.075f,
+			0.15f,
+			0.225f,
+			0.275f
 		};
 
 		float aux = 0.0f;
