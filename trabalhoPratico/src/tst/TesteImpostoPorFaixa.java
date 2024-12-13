@@ -17,12 +17,12 @@ public class TesteImpostoPorFaixa {
 
     private IRPF irpf;
     private float salario;
-    private float impostoEsperado;
+    private float aliquotaEsperada;
 
     // Construtor parametrizado
-    public TesteImpostoPorFaixa(float salario, float impostoEsperado) {
+    public TesteImpostoPorFaixa(float salario, float aliquotaEsperada) {
         this.salario = salario;
-        this.impostoEsperado = impostoEsperado;
+        this.aliquotaEsperada = aliquotaEsperada;
     }
 
     @Before
@@ -36,16 +36,17 @@ public class TesteImpostoPorFaixa {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-            // Cenários de rendimento com imposto esperado
-            {2259.49f, 2259.49f},  // Caso com salário de 2259.49 e imposto calculado esperado
-            {4000.00f, 4000.0f},        // Caso com salário que não gera imposto
-            {1000.00f, 1000.00f}, // Caso com salário mais alto e imposto gerado
-            {50000.00f, 50000.00f} // Caso com salário ainda mais alto e imposto esperado
+            // Teste de faixas de acordo com as tabelas do README
+            {2259.20f, 0.0f},
+            {2259.21f, 0.075f},
+            {2826.66f, 0.15f},  
+            {3751.06f, 0.225f}, 
+            {4664.69f, 0.275f},
         });
     }
 
     @Test
     public void calculaTotalImpostos() {
-        assertEquals(impostoEsperado, irpf.calcularBaseDeCalculo(), 0.01f);
+        assertEquals(aliquotaEsperada, irpf.getPorcentagemFaixa(), 0.01f);
     }
 }

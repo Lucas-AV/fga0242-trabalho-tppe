@@ -328,6 +328,33 @@ public class IRPF {
 	}
 
 	
+	public float getPorcentagemFaixa(){
+		float salario = calcularBaseDeCalculo();
+		float aliquota = 0.0f;
+		
+		if (salario <= 2259.20f){
+			aliquota = 0.0f;
+		}
+		
+		else if (salario > 2259.20f && salario <= 2826.65f){
+			aliquota = 0.075f;
+		}
+		
+		else if (salario > 2826.65f && salario <= 3751.05f){
+			aliquota = 0.15f;
+		}
+		
+		else if (salario > 3751.05f && salario <= 4664.68f){
+			aliquota = 0.225f;
+		}
+
+		else{
+			aliquota = 0.275f;
+		}
+
+		return aliquota;
+	}
+
 
 	/*func LIMIRIO - os impostos por faixas e o total do imposto,*/
 	public float calculaTotalImpostos() {
