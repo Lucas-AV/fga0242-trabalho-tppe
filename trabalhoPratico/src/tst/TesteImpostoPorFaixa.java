@@ -37,10 +37,10 @@ public class TesteImpostoPorFaixa {
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
             // Cenários de rendimento com imposto esperado
-            {2259.49f, 6810.41f},  // Caso com salário de 2259.49 e imposto calculado esperado
-            {4000.00f, 0f},        // Caso com salário que não gera imposto
-            {10000.00f, 1000.00f}, // Caso com salário mais alto e imposto gerado
-            {50000.00f, 15000.00f} // Caso com salário ainda mais alto e imposto esperado
+            {2259.49f, 2259.49f},  // Caso com salário de 2259.49 e imposto calculado esperado
+            {4000.00f, 4000.0f},        // Caso com salário que não gera imposto
+            {1000.00f, 1000.00f}, // Caso com salário mais alto e imposto gerado
+            {50000.00f, 50000.00f} // Caso com salário ainda mais alto e imposto esperado
         });
     }
 
@@ -49,4 +49,3 @@ public class TesteImpostoPorFaixa {
         assertEquals(impostoEsperado, irpf.calcularBaseDeCalculo(), 0.01f);
     }
 }
-

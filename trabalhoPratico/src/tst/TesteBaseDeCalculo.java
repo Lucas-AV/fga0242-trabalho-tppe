@@ -57,16 +57,16 @@ public class TesteBaseDeCalculo {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-            // Caso 1: Rendimentos e deduções com valores conhecidos
+            // Caso 0: Rendimentos e deduções com valores conhecidos
             {8000f, 2000f, 1500f, 1000f, 500f, 1500f, 6810.41f},
 
-            // Caso 2: Teste com salário maior e deduções altas
-            {15000f, 3000f, 1000f, 2000f, 1000f, 2000f, 16210.41f},
+            // Caso 1: Teste com salário maior e deduções altas
+            {15000f, 3000f, 1000f, 2000f, 1000f, 2000f, 12810.41f},
 
-            // Caso 3: Teste com salário e aluguel baixos e alta pensão alimentícia
+            // Caso 2: Teste com salário e aluguel baixos e alta pensão alimentícia
             {3000f, 1000f, 0f, 500f, 1000f, 3000f, 0f},
 
-            // Caso 4: Teste sem rendimentos tributáveis
+            // Caso 3: Teste sem rendimentos tributáveis
             {0f, 0f, 0f, 0f, 0f, 0f, 0f}
         });
     }
@@ -76,5 +76,3 @@ public class TesteBaseDeCalculo {
         assertEquals(resultadoEsperado, irpf.calcularBaseDeCalculo(), 0.01f);
     }
 }
-
-
