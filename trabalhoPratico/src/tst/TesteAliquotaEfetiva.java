@@ -1,75 +1,69 @@
 package tst;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import app.IRPF;
 
+import java.util.Arrays;
+import java.util.Collection;
+
+@RunWith(Parameterized.class)
 public class TesteAliquotaEfetiva {
-    IRPF irpf;
-	
-	@Before
-	public void setup() {
-		irpf = new IRPF();
+
+    private IRPF irpf;
+    private float rendimentoSalario;
+    private float rendimentoAluguel;
+    private float contribuicaoPrevidenciaria;
+    private float valorDependente;
+    private float valorPensao;
+    private float resultadoEsperado;
+
+    public TesteAliquotaEfetiva(float rendimentoSalario, float rendimentoAluguel, 
+                                float contribuicaoPrevidenciaria, float valorDependente, 
+                                float valorPensao, float resultadoEsperado) {
+        this.rendimentoSalario = rendimentoSalario;
+        this.rendimentoAluguel = rendimentoAluguel;
+        this.contribuicaoPrevidenciaria = contribuicaoPrevidenciaria;
+        this.valorDependente = valorDependente;
+        this.valorPensao = valorPensao;
+        this.resultadoEsperado = resultadoEsperado;
     }
 
-	
-	@Test
-	public void testCalcularAliquotaEfetivaComValoresMedios() {
-		irpf.criarRendimento("Salário", IRPF.TRIBUTAVEL, 8000);
-		irpf.criarRendimento("Aluguel", IRPF.TRIBUTAVEL, 2000);
-		irpf.cadastrarDeducaoIntegral("Contribuição previdenciária", 1000);
-		irpf.cadastrarContribuicaoPrevidenciaria(500);
-		irpf.cadastrarDependente("Filho", "filho");
-		irpf.cadastrarPensaoAlimenticia("Filho", 1500);
-	
-		assertEquals(9.76f, irpf.aliquotaEfetiva(), 0.01f);
-	}
-	
-	
-    @Test
-    public void testCalcularAliquotaEfetivaSemRendimentos() {
-        assertEquals(0f, irpf.aliquotaEfetiva(), 0.01f);
+    @Before
+    public void setup() {
+        irpf = new IRPF();
     }
 
-    @Test
-    public void testCalcularAliquotaEfetivaComApenasRendimentoIsento() {
-		irpf.criarRendimento("Rendimento nulo", IRPF.TRIBUTAVEL, 0);
-        irpf.criarRendimento("Bolsa de estudos", IRPF.NAOTRIBUTAVEL, 3000);
-        assertEquals(0f, irpf.aliquotaEfetiva(), 0.0f);
-    }
-
-    @Test
-    public void testCalcularAliquotaEfetivaComDeducoesAltas() {
-        irpf.criarRendimento("Salário", IRPF.TRIBUTAVEL, 5000);
-        irpf.cadastrarDeducaoIntegral("Contribuição previdenciária", 3000);
-        irpf.cadastrarContribuicaoPrevidenciaria(2000);
-        assertEquals(0f, irpf.aliquotaEfetiva(), 0f);
+    @Parameterized.Parameters
+    public static Collection<Object[]> parametros() {
+        return Arrays.asList(new Object[][] {
+            { 8000, 2000, 1000, 1, 1500, 9.76f },
+            { 0, 0, 0, 0, 0, 0f },
+            { 0, 3000, 0, 0, 0, 0f },
+            { 5000, 0, 3000, 0, 0, 0f },
+            { 50000, 20000, 10000, 0, 0, 20.17f },
+            { 15000, 0, 2000, 3, 0, 16.81f }
+        });
     }
 
     @Test
-    public void testCalcularAliquotaEfetivaComAltosRendimentos() {
-        irpf.criarRendimento("Salário", IRPF.TRIBUTAVEL, 50000);
-        irpf.criarRendimento("Investimentos", IRPF.TRIBUTAVEL, 20000);
-        irpf.cadastrarDeducaoIntegral("Contribuição previdenciária", 10000);
-        irpf.cadastrarContribuicaoPrevidenciaria(5000);
-        irpf.cadastrarDependente("Filho", "filho");
-        irpf.cadastrarDependente("Cônjuge", "esposa");
-        assertEquals(20.17f, irpf.aliquotaEfetiva(), 0.01f);
-    }
+    public void testCalcularAliquotaEfetiva() {
+        irpf.criarRendimento("Salário", IRPF.TRIBUTAVEL, rendimentoSalario);
+        irpf.criarRendimento("Aluguel", IRPF.TRIBUTAVEL, rendimentoAluguel);
+        irpf.cadastrarDeducaoIntegral("Contribuição previdenciária", contribuicaoPrevidenciaria);
+        irpf.cadastrarContribuicaoPrevidenciaria(contribuicaoPrevidenciaria);
+        
+        for (int i = 0; i < valorDependente; i++) {
+            irpf.cadastrarDependente("Filho " + (i + 1), "filho");
+        }
 
-    @Test
-    public void testCalcularAliquotaEfetivaComMultiplosDependentes() {
-        irpf.criarRendimento("Salário", IRPF.TRIBUTAVEL, 15000);
-        irpf.cadastrarDependente("Filho", "filho");
-        irpf.cadastrarDependente("Filha", "filha");
-        irpf.cadastrarDependente("Esposa", "esposa");
-        irpf.cadastrarContribuicaoPrevidenciaria(2000);
-        assertEquals(16.81f, irpf.aliquotaEfetiva(), 0.01f);
+        irpf.cadastrarPensaoAlimenticia("Filho", valorPensao);
+
+        assertEquals(resultadoEsperado, irpf.aliquotaEfetiva(), 0.01f);
     }
 }
