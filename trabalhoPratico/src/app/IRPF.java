@@ -341,7 +341,7 @@ public class IRPF {
 		float imposto = 0.0f;
 		
 		if (salario <= faixas[0]){
-			return imposto + aux;
+			return 0.0f;
 		}
 		
 		if (salario > faixas[0] && salario >= faixas[1]){
@@ -381,12 +381,9 @@ public class IRPF {
 	public float aliquotaEfetiva() {
 		// Calcular o imposto devido
 		float impostoDevido = calculaTotalImpostos();
-		
-		// Calcular a base de cálculo
-		float baseDeCalculo = calcularBaseDeCalculo(); 
 
 		// Calcular a aliquota efetiva
-		float aliquotaEfetiva = (impostoDevido / baseDeCalculo) * 100;
+		float aliquotaEfetiva = (impostoDevido / getTotalRendimentosTributaveis()) * 100;
 
 		return Math.max(aliquotaEfetiva, 0.0f);
 	}
