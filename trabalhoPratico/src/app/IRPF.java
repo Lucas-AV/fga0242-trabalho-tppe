@@ -327,32 +327,10 @@ public class IRPF {
 	    return Math.max(baseCalculo, 0.0f); // Evita que a base de cálculo fique negativa
 	}
 
-	
+	// Pega a porcentagem da faixa
 	public float getPorcentagemFaixa(){
-		float salario = calcularBaseDeCalculo();
-		float aliquota = 0.0f;
-		
-		if (salario <= 2259.20f){
-			aliquota = 0.0f;
-		}
-		
-		else if (salario > 2259.20f && salario <= 2826.65f){
-			aliquota = 0.075f;
-		}
-		
-		else if (salario > 2826.65f && salario <= 3751.05f){
-			aliquota = 0.15f;
-		}
-		
-		else if (salario > 3751.05f && salario <= 4664.68f){
-			aliquota = 0.225f;
-		}
-
-		else{
-			aliquota = 0.275f;
-		}
-
-		return aliquota;
+        FaixaAliquota faixa = new FaixaAliquota(calcularBaseDeCalculo());
+        return faixa.getPorcentagemFaixa();
 	}
 
 
@@ -361,62 +339,6 @@ public class IRPF {
         CalculoImposto calculo = new CalculoImposto(calcularBaseDeCalculo());
         return calculo.calcularImpostos();
     }
-
-
-	// /*func LIMIRIO - os impostos por faixas e o total do imposto,*/
-	// public float calculaTotalImpostos() {
-	// 	float salario = calcularBaseDeCalculo();
-
-	// 	float faixas[] = {
-	// 		2259.20f, 
-	// 		2826.65f, 
-	// 		3751.05f,
-	// 		4664.68f
-	// 	};
-
-	// 	float aliquota[] = {
-	// 		0.0f,
-	// 		0.075f,
-	// 		0.15f,
-	// 		0.225f,
-	// 		0.275f
-	// 	};
-
-	// 	float aux = 0.0f;
-	// 	float imposto = 0.0f;
-		
-	// 	if (salario <= faixas[0]){
-	// 		return 0.0f;
-	// 	}
-		
-	// 	if (salario > faixas[0] && salario >= faixas[1]){
-	// 		imposto += 42.59f;
-	// 	} else {
-	// 		aux = salario - faixas[0];
-	// 		aux *= aliquota[1];
-	// 		return imposto + aux;
-	// 	}
-		
-	// 	if (salario > faixas[1] && salario >= faixas[2]){
-	// 		imposto += 138.66f;
-	// 	} else {
-	// 		aux = salario - faixas[1];
-	// 		aux *= aliquota[2];
-	// 		return imposto + aux;
-	// 	}
-		
-	// 	if (salario > faixas[2] && salario >= faixas[3]){
-	// 		imposto += 205.57;
-	// 	}else{
-	// 		aux = salario - faixas[2];
-	// 		aux *= aliquota[3];
-	// 		return imposto + aux;
-	// 	}
-
-	// 	aux = salario - faixas[3];
-	// 	aux *= aliquota[4];
-	// 	return imposto + aux;
-	// }
 
 	/**
 	 * Aliquota efetiva do imposto pago 
@@ -482,5 +404,27 @@ class CalculoImposto {
 
         aux = baseDeCalculo - faixas[3];
         return imposto + (aux * aliquotas[4]);
+    }
+}
+
+// Classe Faixa Aliquota
+class FaixaAliquota {
+    private final float salario;
+    public BaseDeCalculo(float baseDeCalculo) {
+        this.baseDeCalculo = baseDeCalculo;
+    }
+
+    public static float getPorcentagemFaixa() {
+        if (salario <= 2259.20f) {
+            return 0.0f;
+        } else if (salario <= 2826.65f) {
+            return 0.075f;
+        } else if (salario <= 3751.05f) {
+            return 0.15f;
+        } else if (salario <= 4664.68f) {
+            return 0.225f;
+        } else {
+            return 0.275f;
+        }
     }
 }
