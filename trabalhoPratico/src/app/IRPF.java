@@ -356,6 +356,13 @@ public class IRPF {
 	}
 
 
+	// Calcula Total Impostos
+	public float calculaTotalImpostos() {
+        CalculoImposto calculo = new CalculoImposto(calcularBaseDeCalculo());
+        return calculo.calcularImpostos();
+    }
+
+
 	// /*func LIMIRIO - os impostos por faixas e o total do imposto,*/
 	// public float calculaTotalImpostos() {
 	// 	float salario = calcularBaseDeCalculo();
