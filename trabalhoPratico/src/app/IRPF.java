@@ -1,32 +1,28 @@
 package app;
 
+
+
 public class IRPF {
 
-	public static final boolean TRIBUTAVEL = true;
-	public static final boolean NAOTRIBUTAVEL = false;
-	private String[] nomeRendimento;
-	private boolean[] rendimentoTributavel;
-	private float[] valorRendimento;
-	private int numRendimentos;
-	private float totalRendimentos;
-	
+	// Rendimentos
+	private Rendimentos rendimentos;
+
+	// Dependentes - Redução
 	private String[] nomesDependentes;
 	private String[] parentescosDependentes;
 	private int numDependentes;
 	
+	// Contribuição Previdenciária e Pensão Alimentícia - Redução
 	private int numContribuicaoPrevidenciaria;
 	private float totalContribuicaoPrevidenciaria;
-	
 	private float totalPensaoAlimenticia;
-	
+
+	// Deduções - Redução
 	private String[] nomesDeducoes;
 	private float[] valoresDeducoes;
 
 	public IRPF() {
-		nomeRendimento = new String[0];
-		rendimentoTributavel = new boolean[0];
-		valorRendimento = new float[0];
-		
+        this.rendimentos = rendimentos;
 		nomesDependentes = new String[0];
 		parentescosDependentes = new String[0];
 		numDependentes = 0;
@@ -38,96 +34,6 @@ public class IRPF {
 		
 		nomesDeducoes = new String[0];
 		valoresDeducoes = new float[0];
-	}
-	
-	/**
-	 * Cadastra um rendimento na base do contribuinte, informando o nome do 
-	 * rendimento, seu valor e se ele é tributável ou não. 
-	 * @param nome nome do rendimento a ser cadastrado
-	 * @param tributavel true caso seja tributável, false caso contrário
-	 * @param valor valor do rendimento a ser cadastrado
-	 */
-	public void criarRendimento(String nome, boolean tributavel, float valor) {
-		//Adicionar o nome do novo rendimento
-		String[] temp = new String[nomeRendimento.length + 1];
-		for (int i=0; i<nomeRendimento.length; i++)
-			temp[i] = nomeRendimento[i];
-		temp[nomeRendimento.length] = nome;
-		nomeRendimento = temp;
-
-		//adicionar tributavel ou nao no vetor 
-		boolean[] temp2 = new boolean[rendimentoTributavel.length + 1];
-		for (int i=0; i<rendimentoTributavel.length; i++) 
-			temp2[i] = rendimentoTributavel[i];
-		temp2[rendimentoTributavel.length] = tributavel;
-		rendimentoTributavel = temp2;
-		
-		//adicionar valor rendimento ao vetor
-		float[] temp3 = new float[valorRendimento.length + 1];
-		for (int i=0; i<valorRendimento.length; i++) {
-			temp3[i] = valorRendimento[i];
-		}
-		temp3[valorRendimento.length] = valor; 
-		valorRendimento = temp3;
-		
-		this.numRendimentos += 1;
-		this.totalRendimentos += valor;
-		
-	}
-
-	/**
-	 * Retorna o número de rendimentos já cadastrados para o contribuinte
-	 * @return numero de rendimentos
-	 */
-	public int getNumRendimentos() {
-		return numRendimentos;
-	}
-
-	/**
-	 * Retorna o valor total de rendimentos cadastrados para o contribuinte
-	 * @return valor total dos rendimentos
-	 */
-	public float getTotalRendimentos() {
-		return totalRendimentos;
-	}
-
-	/**
-	 * Retorna o valor total de rendimentos tributáveis do contribuinte
-	 * @return valor total dos rendimentos tributáveis
-	 */
-	public float getTotalRendimentosTributaveis() {
-		float totalRendimentosTributaveis = 0;
-		for (int i=0; i<rendimentoTributavel.length; i++) {
-			if (rendimentoTributavel[i]) {
-				totalRendimentosTributaveis += valorRendimento[i];
-			}
-		}
-		return totalRendimentosTributaveis;
-	}
-
-	/**
-	 * Método para realizar o cadastro de um dependente, informando seu grau 
-	 * de parentesco
-	 * @param nome Nome do dependente
-	 * @param parentesco Grau de parentesco
-	 */
-	public void cadastrarDependente(String nome, String parentesco) {
-		// adicionar dependente 
-		String[] temp = new String[nomesDependentes.length + 1];
-		for (int i=0; i<nomesDependentes.length; i++) {
-			temp[i] = nomesDependentes[i];
-		}
-		temp[nomesDependentes.length] = nome;
-		nomesDependentes = temp;
-		
-		String[] temp2 = new String[parentescosDependentes.length + 1];
-		for (int i=0; i<parentescosDependentes.length; i++) {
-			temp2[i] = parentescosDependentes[i];
-		}
-		temp2[parentescosDependentes.length] = parentesco;
-		parentescosDependentes = temp2;
-		
-		numDependentes++;
 	}
 
 	/**
@@ -290,21 +196,6 @@ public class IRPF {
 		return soma;
 	}
 
-	// OBS
-	
-	/*
-	 * - a base de cálculo do imposto, 
-	 * - os impostos por faixas e o total do imposto, 
-	 * - e a alíquota efetiva do imposto pago. 
-	*/
-	
-	/* func LUCAS - a base de cálculo do imposto, */ 
-	/*
-	 * Aliquota efetiva do imposto pago 
-	 * @param 
-	 * @return
-	 */
-
 	/** 
 	 * Calcula a base de cálculo do imposto, que é o valor total dos rendimentos 
 	 * tributáveis menos as deduções permitidas. 
@@ -426,5 +317,73 @@ class FaixaAliquota {
         } else {
             return 0.275f;
         }
+    }
+}
+
+
+// Classe para gerenciar rendimentos
+class Rendimentos {
+    public static final boolean TRIBUTAVEL = true;
+    public static final boolean NAOTRIBUTAVEL = false;
+
+    private String[] nomeRendimento;
+    private boolean[] rendimentoTributavel;
+    private float[] valorRendimento;
+    private int numRendimentos;
+    private float totalRendimentos;
+
+    public Rendimentos() {
+        this.nomeRendimento = new String[0];
+        this.rendimentoTributavel = new boolean[0];
+        this.valorRendimento = new float[0];
+        this.numRendimentos = 0;
+        this.totalRendimentos = 0;
+    }
+
+    public void criarRendimento(String nome, boolean tributavel, float valor) {
+        // Adicionar o nome do novo rendimento
+        String[] temp = new String[nomeRendimento.length + 1];
+        for (int i = 0; i < nomeRendimento.length; i++) {
+            temp[i] = nomeRendimento[i];
+        }
+        temp[nomeRendimento.length] = nome;
+        nomeRendimento = temp;
+
+        // Adicionar tributável ou não no vetor
+        boolean[] temp2 = new boolean[rendimentoTributavel.length + 1];
+        for (int i = 0; i < rendimentoTributavel.length; i++) {
+            temp2[i] = rendimentoTributavel[i];
+        }
+        temp2[rendimentoTributavel.length] = tributavel;
+        rendimentoTributavel = temp2;
+
+        // Adicionar valor rendimento ao vetor
+        float[] temp3 = new float[valorRendimento.length + 1];
+        for (int i = 0; i < valorRendimento.length; i++) {
+            temp3[i] = valorRendimento[i];
+        }
+        temp3[valorRendimento.length] = valor;
+        valorRendimento = temp3;
+
+        this.numRendimentos += 1;
+        this.totalRendimentos += valor;
+    }
+
+    public int getNumRendimentos() {
+        return numRendimentos;
+    }
+
+    public float getTotalRendimentos() {
+        return totalRendimentos;
+    }
+
+    public float getTotalRendimentosTributaveis() {
+        float totalRendimentosTributaveis = 0;
+        for (int i = 0; i < rendimentoTributavel.length; i++) {
+            if (rendimentoTributavel[i]) {
+                totalRendimentosTributaveis += valorRendimento[i];
+            }
+        }
+        return totalRendimentosTributaveis;
     }
 }
