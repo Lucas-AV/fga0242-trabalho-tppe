@@ -356,60 +356,60 @@ public class IRPF {
 	}
 
 
-	/*func LIMIRIO - os impostos por faixas e o total do imposto,*/
-	public float calculaTotalImpostos() {
-		float salario = calcularBaseDeCalculo();
+	// /*func LIMIRIO - os impostos por faixas e o total do imposto,*/
+	// public float calculaTotalImpostos() {
+	// 	float salario = calcularBaseDeCalculo();
 
-		float faixas[] = {
-			2259.20f, 
-			2826.65f, 
-			3751.05f,
-			4664.68f
-		};
+	// 	float faixas[] = {
+	// 		2259.20f, 
+	// 		2826.65f, 
+	// 		3751.05f,
+	// 		4664.68f
+	// 	};
 
-		float aliquota[] = {
-			0.0f,
-			0.075f,
-			0.15f,
-			0.225f,
-			0.275f
-		};
+	// 	float aliquota[] = {
+	// 		0.0f,
+	// 		0.075f,
+	// 		0.15f,
+	// 		0.225f,
+	// 		0.275f
+	// 	};
 
-		float aux = 0.0f;
-		float imposto = 0.0f;
+	// 	float aux = 0.0f;
+	// 	float imposto = 0.0f;
 		
-		if (salario <= faixas[0]){
-			return 0.0f;
-		}
+	// 	if (salario <= faixas[0]){
+	// 		return 0.0f;
+	// 	}
 		
-		if (salario > faixas[0] && salario >= faixas[1]){
-			imposto += 42.59f;
-		} else {
-			aux = salario - faixas[0];
-			aux *= aliquota[1];
-			return imposto + aux;
-		}
+	// 	if (salario > faixas[0] && salario >= faixas[1]){
+	// 		imposto += 42.59f;
+	// 	} else {
+	// 		aux = salario - faixas[0];
+	// 		aux *= aliquota[1];
+	// 		return imposto + aux;
+	// 	}
 		
-		if (salario > faixas[1] && salario >= faixas[2]){
-			imposto += 138.66f;
-		} else {
-			aux = salario - faixas[1];
-			aux *= aliquota[2];
-			return imposto + aux;
-		}
+	// 	if (salario > faixas[1] && salario >= faixas[2]){
+	// 		imposto += 138.66f;
+	// 	} else {
+	// 		aux = salario - faixas[1];
+	// 		aux *= aliquota[2];
+	// 		return imposto + aux;
+	// 	}
 		
-		if (salario > faixas[2] && salario >= faixas[3]){
-			imposto += 205.57;
-		}else{
-			aux = salario - faixas[2];
-			aux *= aliquota[3];
-			return imposto + aux;
-		}
+	// 	if (salario > faixas[2] && salario >= faixas[3]){
+	// 		imposto += 205.57;
+	// 	}else{
+	// 		aux = salario - faixas[2];
+	// 		aux *= aliquota[3];
+	// 		return imposto + aux;
+	// 	}
 
-		aux = salario - faixas[3];
-		aux *= aliquota[4];
-		return imposto + aux;
-	}
+	// 	aux = salario - faixas[3];
+	// 	aux *= aliquota[4];
+	// 	return imposto + aux;
+	// }
 
 	/**
 	 * Aliquota efetiva do imposto pago 
@@ -433,4 +433,47 @@ public class IRPF {
 	}
 
 }
-// ( ͡° ͜ʖ ͡°)
+
+// Extração da função calcularImpostos() da classe IRPF para virar um objeto-método 
+class CalculoImposto {
+    private final float baseDeCalculo;
+
+    public CalculoImposto(float baseDeCalculo) {
+        this.baseDeCalculo = baseDeCalculo;
+    }
+
+    public float calcularImpostos() {
+        float[] faixas = {2259.20f, 2826.65f, 3751.05f, 4664.68f};
+        float[] aliquotas = {0.0f, 0.075f, 0.15f, 0.225f, 0.275f};
+        float imposto = 0.0f;
+        float aux;
+
+        if (baseDeCalculo <= faixas[0]) {
+            return 0.0f;
+        }
+
+        if (baseDeCalculo > faixas[0] && baseDeCalculo <= faixas[1]) {
+            aux = baseDeCalculo - faixas[0];
+            return aux * aliquotas[1];
+        }
+
+        imposto += 42.59f;
+
+        if (baseDeCalculo > faixas[1] && baseDeCalculo <= faixas[2]) {
+            aux = baseDeCalculo - faixas[1];
+            return imposto + (aux * aliquotas[2]);
+        }
+
+        imposto += 138.66f;
+
+        if (baseDeCalculo > faixas[2] && baseDeCalculo <= faixas[3]) {
+            aux = baseDeCalculo - faixas[2];
+            return imposto + (aux * aliquotas[3]);
+        }
+
+        imposto += 205.57f;
+
+        aux = baseDeCalculo - faixas[3];
+        return imposto + (aux * aliquotas[4]);
+    }
+}
