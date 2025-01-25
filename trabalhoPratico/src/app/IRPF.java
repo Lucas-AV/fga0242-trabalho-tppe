@@ -4,6 +4,9 @@ package app;
 
 public class IRPF {
 
+    public static final boolean TRIBUTAVEL = true;
+    public static final boolean NAOTRIBUTAVEL = false;
+	
 	// Rendimentos
 	private Rendimentos rendimentos;
 
@@ -22,7 +25,7 @@ public class IRPF {
 	private float[] valoresDeducoes;
 
 	public IRPF() {
-        this.rendimentos = rendimentos;
+        this.rendimentos = new Rendimentos();
 		nomesDependentes = new String[0];
 		parentescosDependentes = new String[0];
 		numDependentes = 0;
@@ -35,7 +38,28 @@ public class IRPF {
 		nomesDeducoes = new String[0];
 		valoresDeducoes = new float[0];
 	}
+    public IRPF(Rendimentos rendimentos, Deducoes deducoes) {
+        this.rendimentos = rendimentos;
+    }
 
+	public void cadastrarDependente(String nome, String parentesco) {
+		// adicionar dependente 
+		String[] temp = new String[nomesDependentes.length + 1];
+		for (int i=0; i<nomesDependentes.length; i++) {
+			temp[i] = nomesDependentes[i];
+		}
+		temp[nomesDependentes.length] = nome;
+		nomesDependentes = temp;
+		
+		String[] temp2 = new String[parentescosDependentes.length + 1];
+		for (int i=0; i<parentescosDependentes.length; i++) {
+			temp2[i] = parentescosDependentes[i];
+		}
+		temp2[parentescosDependentes.length] = parentesco;
+		parentescosDependentes = temp2;
+		
+		numDependentes++;
+	}
 	/**
 	 * Método que retorna o numero de dependentes do contribuinte
 	 * @return numero de dependentes
@@ -196,6 +220,22 @@ public class IRPF {
 		return soma;
 	}
 
+	// Rendimentos
+    public void criarRendimento(String nome, boolean tributavel, float valor) {
+        rendimentos.criarRendimento(nome, tributavel, valor);
+    }
+    public int getNumRendimentos() {
+        return rendimentos.getNumRendimentos();
+    }
+    public float getTotalRendimentos() {
+        return rendimentos.getTotalRendimentos();
+    }
+    public float getTotalRendimentosTributaveis() {
+        return rendimentos.getTotalRendimentosTributaveis();
+    }
+
+
+
 	/** 
 	 * Calcula a base de cálculo do imposto, que é o valor total dos rendimentos 
 	 * tributáveis menos as deduções permitidas. 
@@ -203,7 +243,7 @@ public class IRPF {
 	 */ 
 	public float calcularBaseDeCalculo() { 
 	    // Calcular o total de rendimentos tributáveis
-	    float totalDeRendimentos = getTotalRendimentosTributaveis(); 
+	    float totalDeRendimentos = rendimentos.getTotalRendimentosTributaveis(); 
 	    
 	    // Calcular as deduções totais (dependentes, contribuições previdenciárias, etc.)
 	    float totalDeDeducoes = getDeducao() + getTotalOutrasDeducoes(); 
@@ -220,8 +260,8 @@ public class IRPF {
 
 	// Pega a porcentagem da faixa
 	public float getPorcentagemFaixa(){
-        FaixaAliquota faixa = new FaixaAliquota(calcularBaseDeCalculo());
-        return faixa.getPorcentagemFaixa();
+        FaixaAliquota faixa = new FaixaAliquota();
+        return faixa.getPorcentagemFaixa(calcularBaseDeCalculo());
 	}
 
 
@@ -241,7 +281,7 @@ public class IRPF {
 		float impostoDevido = calculaTotalImpostos();
 	
 		// Obter o total de rendimentos tributáveis
-		float totalRendimentosTributaveis = getTotalRendimentosTributaveis();
+		float totalRendimentosTributaveis = rendimentos.getTotalRendimentosTributaveis();
 	
 		// Evitar divisão por zero
 		if (totalRendimentosTributaveis == 0) {
@@ -300,12 +340,7 @@ class CalculoImposto {
 
 // Classe Faixa Aliquota
 class FaixaAliquota {
-    private final float salario;
-    public BaseDeCalculo(float baseDeCalculo) {
-        this.baseDeCalculo = baseDeCalculo;
-    }
-
-    public static float getPorcentagemFaixa() {
+    public float getPorcentagemFaixa(float salario) {
         if (salario <= 2259.20f) {
             return 0.0f;
         } else if (salario <= 2826.65f) {
@@ -323,8 +358,6 @@ class FaixaAliquota {
 
 // Classe para gerenciar rendimentos
 class Rendimentos {
-    public static final boolean TRIBUTAVEL = true;
-    public static final boolean NAOTRIBUTAVEL = false;
 
     private String[] nomeRendimento;
     private boolean[] rendimentoTributavel;
