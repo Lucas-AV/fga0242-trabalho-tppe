@@ -1,32 +1,28 @@
 package app;
 
+
+
 public class IRPF {
 
-	public static final boolean TRIBUTAVEL = true;
-	public static final boolean NAOTRIBUTAVEL = false;
-	private String[] nomeRendimento;
-	private boolean[] rendimentoTributavel;
-	private float[] valorRendimento;
-	private int numRendimentos;
-	private float totalRendimentos;
+    public static final boolean TRIBUTAVEL = true;
+    public static final boolean NAOTRIBUTAVEL = false;
 	
+	// Rendimentos
+	private Rendimentos rendimentos;
+
+
 	private String[] nomesDependentes;
 	private String[] parentescosDependentes;
 	private int numDependentes;
+	private float totalPensaoAlimenticia;
 	
 	private int numContribuicaoPrevidenciaria;
 	private float totalContribuicaoPrevidenciaria;
-	
-	private float totalPensaoAlimenticia;
-	
 	private String[] nomesDeducoes;
 	private float[] valoresDeducoes;
 
 	public IRPF() {
-		nomeRendimento = new String[0];
-		rendimentoTributavel = new boolean[0];
-		valorRendimento = new float[0];
-		
+        this.rendimentos = new Rendimentos();
 		nomesDependentes = new String[0];
 		parentescosDependentes = new String[0];
 		numDependentes = 0;
@@ -39,78 +35,10 @@ public class IRPF {
 		nomesDeducoes = new String[0];
 		valoresDeducoes = new float[0];
 	}
-	
-	/**
-	 * Cadastra um rendimento na base do contribuinte, informando o nome do 
-	 * rendimento, seu valor e se ele é tributável ou não. 
-	 * @param nome nome do rendimento a ser cadastrado
-	 * @param tributavel true caso seja tributável, false caso contrário
-	 * @param valor valor do rendimento a ser cadastrado
-	 */
-	public void criarRendimento(String nome, boolean tributavel, float valor) {
-		//Adicionar o nome do novo rendimento
-		String[] temp = new String[nomeRendimento.length + 1];
-		for (int i=0; i<nomeRendimento.length; i++)
-			temp[i] = nomeRendimento[i];
-		temp[nomeRendimento.length] = nome;
-		nomeRendimento = temp;
+    public IRPF(Rendimentos rendimentos) {
+		this.rendimentos = rendimentos;
+    }
 
-		//adicionar tributavel ou nao no vetor 
-		boolean[] temp2 = new boolean[rendimentoTributavel.length + 1];
-		for (int i=0; i<rendimentoTributavel.length; i++) 
-			temp2[i] = rendimentoTributavel[i];
-		temp2[rendimentoTributavel.length] = tributavel;
-		rendimentoTributavel = temp2;
-		
-		//adicionar valor rendimento ao vetor
-		float[] temp3 = new float[valorRendimento.length + 1];
-		for (int i=0; i<valorRendimento.length; i++) {
-			temp3[i] = valorRendimento[i];
-		}
-		temp3[valorRendimento.length] = valor; 
-		valorRendimento = temp3;
-		
-		this.numRendimentos += 1;
-		this.totalRendimentos += valor;
-		
-	}
-
-	/**
-	 * Retorna o número de rendimentos já cadastrados para o contribuinte
-	 * @return numero de rendimentos
-	 */
-	public int getNumRendimentos() {
-		return numRendimentos;
-	}
-
-	/**
-	 * Retorna o valor total de rendimentos cadastrados para o contribuinte
-	 * @return valor total dos rendimentos
-	 */
-	public float getTotalRendimentos() {
-		return totalRendimentos;
-	}
-
-	/**
-	 * Retorna o valor total de rendimentos tributáveis do contribuinte
-	 * @return valor total dos rendimentos tributáveis
-	 */
-	public float getTotalRendimentosTributaveis() {
-		float totalRendimentosTributaveis = 0;
-		for (int i=0; i<rendimentoTributavel.length; i++) {
-			if (rendimentoTributavel[i]) {
-				totalRendimentosTributaveis += valorRendimento[i];
-			}
-		}
-		return totalRendimentosTributaveis;
-	}
-
-	/**
-	 * Método para realizar o cadastro de um dependente, informando seu grau 
-	 * de parentesco
-	 * @param nome Nome do dependente
-	 * @param parentesco Grau de parentesco
-	 */
 	public void cadastrarDependente(String nome, String parentesco) {
 		// adicionar dependente 
 		String[] temp = new String[nomesDependentes.length + 1];
@@ -129,7 +57,6 @@ public class IRPF {
 		
 		numDependentes++;
 	}
-
 	/**
 	 * Método que retorna o numero de dependentes do contribuinte
 	 * @return numero de dependentes
@@ -290,20 +217,22 @@ public class IRPF {
 		return soma;
 	}
 
-	// OBS
-	
-	/*
-	 * - a base de cálculo do imposto, 
-	 * - os impostos por faixas e o total do imposto, 
-	 * - e a alíquota efetiva do imposto pago. 
-	*/
-	
-	/* func LUCAS - a base de cálculo do imposto, */ 
-	/*
-	 * Aliquota efetiva do imposto pago 
-	 * @param 
-	 * @return
-	 */
+
+	// Rendimentos
+    public void criarRendimento(String nome, boolean tributavel, float valor) {
+        rendimentos.criarRendimento(nome, tributavel, valor);
+    }
+    public int getNumRendimentos() {
+        return rendimentos.getNumRendimentos();
+    }
+    public float getTotalRendimentos() {
+        return rendimentos.getTotalRendimentos();
+    }
+    public float getTotalRendimentosTributaveis() {
+        return rendimentos.getTotalRendimentosTributaveis();
+    }
+
+
 
 	/** 
 	 * Calcula a base de cálculo do imposto, que é o valor total dos rendimentos 
@@ -312,7 +241,7 @@ public class IRPF {
 	 */ 
 	public float calcularBaseDeCalculo() { 
 	    // Calcular o total de rendimentos tributáveis
-	    float totalDeRendimentos = getTotalRendimentosTributaveis(); 
+	    float totalDeRendimentos = rendimentos.getTotalRendimentosTributaveis(); 
 	    
 	    // Calcular as deduções totais (dependentes, contribuições previdenciárias, etc.)
 	    float totalDeDeducoes = getDeducao() + getTotalOutrasDeducoes(); 
@@ -327,89 +256,18 @@ public class IRPF {
 	    return Math.max(baseCalculo, 0.0f); // Evita que a base de cálculo fique negativa
 	}
 
-	
+	// Pega a porcentagem da faixa
 	public float getPorcentagemFaixa(){
-		float salario = calcularBaseDeCalculo();
-		float aliquota = 0.0f;
-		
-		if (salario <= 2259.20f){
-			aliquota = 0.0f;
-		}
-		
-		else if (salario > 2259.20f && salario <= 2826.65f){
-			aliquota = 0.075f;
-		}
-		
-		else if (salario > 2826.65f && salario <= 3751.05f){
-			aliquota = 0.15f;
-		}
-		
-		else if (salario > 3751.05f && salario <= 4664.68f){
-			aliquota = 0.225f;
-		}
-
-		else{
-			aliquota = 0.275f;
-		}
-
-		return aliquota;
+        FaixaAliquota faixa = new FaixaAliquota();
+        return faixa.getPorcentagemFaixa(calcularBaseDeCalculo());
 	}
 
 
-	/*func LIMIRIO - os impostos por faixas e o total do imposto,*/
+	// Calcula Total Impostos
 	public float calculaTotalImpostos() {
-		float salario = calcularBaseDeCalculo();
-
-		float faixas[] = {
-			2259.20f, 
-			2826.65f, 
-			3751.05f,
-			4664.68f
-		};
-
-		float aliquota[] = {
-			0.0f,
-			0.075f,
-			0.15f,
-			0.225f,
-			0.275f
-		};
-
-		float aux = 0.0f;
-		float imposto = 0.0f;
-		
-		if (salario <= faixas[0]){
-			return 0.0f;
-		}
-		
-		if (salario > faixas[0] && salario >= faixas[1]){
-			imposto += 42.59f;
-		} else {
-			aux = salario - faixas[0];
-			aux *= aliquota[1];
-			return imposto + aux;
-		}
-		
-		if (salario > faixas[1] && salario >= faixas[2]){
-			imposto += 138.66f;
-		} else {
-			aux = salario - faixas[1];
-			aux *= aliquota[2];
-			return imposto + aux;
-		}
-		
-		if (salario > faixas[2] && salario >= faixas[3]){
-			imposto += 205.57;
-		}else{
-			aux = salario - faixas[2];
-			aux *= aliquota[3];
-			return imposto + aux;
-		}
-
-		aux = salario - faixas[3];
-		aux *= aliquota[4];
-		return imposto + aux;
-	}
+        CalculoImposto calculo = new CalculoImposto(calcularBaseDeCalculo());
+        return calculo.calcularImpostos();
+    }
 
 	/**
 	 * Aliquota efetiva do imposto pago 
@@ -421,7 +279,7 @@ public class IRPF {
 		float impostoDevido = calculaTotalImpostos();
 	
 		// Obter o total de rendimentos tributáveis
-		float totalRendimentosTributaveis = getTotalRendimentosTributaveis();
+		float totalRendimentosTributaveis = rendimentos.getTotalRendimentosTributaveis();
 	
 		// Evitar divisão por zero
 		if (totalRendimentosTributaveis == 0) {
@@ -433,4 +291,130 @@ public class IRPF {
 	}
 
 }
-// ( ͡° ͜ʖ ͡°)
+
+// Extração da função calcularImpostos() da classe IRPF para virar um objeto-método 
+class CalculoImposto {
+    private final float baseDeCalculo;
+
+    public CalculoImposto(float baseDeCalculo) {
+        this.baseDeCalculo = baseDeCalculo;
+    }
+
+    public float calcularImpostos() {
+        float[] faixas = {2259.20f, 2826.65f, 3751.05f, 4664.68f};
+        float[] aliquotas = {0.0f, 0.075f, 0.15f, 0.225f, 0.275f};
+        float imposto = 0.0f;
+        float aux;
+
+        if (baseDeCalculo <= faixas[0]) {
+            return 0.0f;
+        }
+
+        if (baseDeCalculo > faixas[0] && baseDeCalculo <= faixas[1]) {
+            aux = baseDeCalculo - faixas[0];
+            return aux * aliquotas[1];
+        }
+
+        imposto += 42.59f;
+
+        if (baseDeCalculo > faixas[1] && baseDeCalculo <= faixas[2]) {
+            aux = baseDeCalculo - faixas[1];
+            return imposto + (aux * aliquotas[2]);
+        }
+
+        imposto += 138.66f;
+
+        if (baseDeCalculo > faixas[2] && baseDeCalculo <= faixas[3]) {
+            aux = baseDeCalculo - faixas[2];
+            return imposto + (aux * aliquotas[3]);
+        }
+
+        imposto += 205.57f;
+
+        aux = baseDeCalculo - faixas[3];
+        return imposto + (aux * aliquotas[4]);
+    }
+}
+
+// Classe Faixa Aliquota
+class FaixaAliquota {
+    public float getPorcentagemFaixa(float salario) {
+        if (salario <= 2259.20f) {
+            return 0.0f;
+        } else if (salario <= 2826.65f) {
+            return 0.075f;
+        } else if (salario <= 3751.05f) {
+            return 0.15f;
+        } else if (salario <= 4664.68f) {
+            return 0.225f;
+        } else {
+            return 0.275f;
+        }
+    }
+}
+
+
+// Classe para gerenciar rendimentos
+class Rendimentos {
+
+    private String[] nomeRendimento;
+    private boolean[] rendimentoTributavel;
+    private float[] valorRendimento;
+    private int numRendimentos;
+    private float totalRendimentos;
+
+    public Rendimentos() {
+        this.nomeRendimento = new String[0];
+        this.rendimentoTributavel = new boolean[0];
+        this.valorRendimento = new float[0];
+        this.numRendimentos = 0;
+        this.totalRendimentos = 0;
+    }
+
+    public void criarRendimento(String nome, boolean tributavel, float valor) {
+        // Adicionar o nome do novo rendimento
+        String[] temp = new String[nomeRendimento.length + 1];
+        for (int i = 0; i < nomeRendimento.length; i++) {
+            temp[i] = nomeRendimento[i];
+        }
+        temp[nomeRendimento.length] = nome;
+        nomeRendimento = temp;
+
+        // Adicionar tributável ou não no vetor
+        boolean[] temp2 = new boolean[rendimentoTributavel.length + 1];
+        for (int i = 0; i < rendimentoTributavel.length; i++) {
+            temp2[i] = rendimentoTributavel[i];
+        }
+        temp2[rendimentoTributavel.length] = tributavel;
+        rendimentoTributavel = temp2;
+
+        // Adicionar valor rendimento ao vetor
+        float[] temp3 = new float[valorRendimento.length + 1];
+        for (int i = 0; i < valorRendimento.length; i++) {
+            temp3[i] = valorRendimento[i];
+        }
+        temp3[valorRendimento.length] = valor;
+        valorRendimento = temp3;
+
+        this.numRendimentos += 1;
+        this.totalRendimentos += valor;
+    }
+
+    public int getNumRendimentos() {
+        return numRendimentos;
+    }
+
+    public float getTotalRendimentos() {
+        return totalRendimentos;
+    }
+
+    public float getTotalRendimentosTributaveis() {
+        float totalRendimentosTributaveis = 0;
+        for (int i = 0; i < rendimentoTributavel.length; i++) {
+            if (rendimentoTributavel[i]) {
+                totalRendimentosTributaveis += valorRendimento[i];
+            }
+        }
+        return totalRendimentosTributaveis;
+    }
+}
