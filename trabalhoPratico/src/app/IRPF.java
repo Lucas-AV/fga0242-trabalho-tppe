@@ -10,17 +10,13 @@ public class IRPF {
 	// Rendimentos
 	private Rendimentos rendimentos;
 
-	// Dependentes - Redução
 	private String[] nomesDependentes;
 	private String[] parentescosDependentes;
 	private int numDependentes;
+	private float totalPensaoAlimenticia;
 	
-	// Contribuição Previdenciária e Pensão Alimentícia - Redução
 	private int numContribuicaoPrevidenciaria;
 	private float totalContribuicaoPrevidenciaria;
-	private float totalPensaoAlimenticia;
-
-	// Deduções - Redução
 	private String[] nomesDeducoes;
 	private float[] valoresDeducoes;
 
@@ -219,6 +215,7 @@ public class IRPF {
 		}
 		return soma;
 	}
+
 
 	// Rendimentos
     public void criarRendimento(String nome, boolean tributavel, float valor) {
@@ -419,4 +416,19 @@ class Rendimentos {
         }
         return totalRendimentosTributaveis;
     }
+}
+
+class Dependentes {
+	private String[] nomesDependentes;
+	private String[] parentescosDependentes;
+	private int numDependentes;
+	private float totalPensaoAlimenticia;
+
+}
+
+class Deducoes {
+	private int numContribuicaoPrevidenciaria;
+	private float totalContribuicaoPrevidenciaria;
+	private String[] nomesDeducoes;
+	private float[] valoresDeducoes;
 }
