@@ -9,8 +9,6 @@ public class IRPF {
 	
 	// Rendimentos
 	private Rendimentos rendimentos;
-	private Deducoes deducoes;
-	private Dependentes dependentes;
 
 
 	private String[] nomesDependentes;
@@ -419,19 +417,4 @@ class Rendimentos {
         }
         return totalRendimentosTributaveis;
     }
-}
-
-class Dependentes {
-	private String[] nomesDependentes;
-	private String[] parentescosDependentes;
-	private int numDependentes;
-	private float totalPensaoAlimenticia;
-
-}
-
-class Deducoes {
-	private int numContribuicaoPrevidenciaria;
-	private float totalContribuicaoPrevidenciaria;
-	private String[] nomesDeducoes;
-	private float[] valoresDeducoes;
 }
