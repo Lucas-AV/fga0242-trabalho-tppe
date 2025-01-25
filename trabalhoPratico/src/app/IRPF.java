@@ -12,15 +12,33 @@ public class IRPF {
 	private Deducoes deducoes;
 	private Dependentes dependentes;
 
+
+	private String[] nomesDependentes;
+	private String[] parentescosDependentes;
+	private int numDependentes;
+	private float totalPensaoAlimenticia;
+	
+	private int numContribuicaoPrevidenciaria;
+	private float totalContribuicaoPrevidenciaria;
+	private String[] nomesDeducoes;
+	private float[] valoresDeducoes;
+
 	public IRPF() {
         this.rendimentos = new Rendimentos();
-        this.deducoes = new Deducoes();
-        this.dependentes = new Dependentes();
+		nomesDependentes = new String[0];
+		parentescosDependentes = new String[0];
+		numDependentes = 0;
+		
+		numContribuicaoPrevidenciaria = 0; 
+		totalContribuicaoPrevidenciaria = 0f;
+		
+		totalPensaoAlimenticia = 0f;
+		
+		nomesDeducoes = new String[0];
+		valoresDeducoes = new float[0];
 	}
-    public IRPF(Rendimentos rendimentos, Deducoes deducoes, Dependentes dependentes) {
+    public IRPF(Rendimentos rendimentos) {
 		this.rendimentos = rendimentos;
-		this.dependentes = dependentes;
-		this.deducoes = deducoes;
     }
 
 	public void cadastrarDependente(String nome, String parentesco) {
